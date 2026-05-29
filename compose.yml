@@ -1,15 +1,15 @@
 services:
-  <%= name %>:
-    image: ghcr.io/podmania/<%= name %>:latest
+  linkwarden:
+    image: ghcr.io/podmania/linkwarden:latest
     userns_mode: "keep-id"
-    container_name: <%= name %>
+    container_name: linkwarden
     ports:
-      <% for port in ports %>
-      - <%= port %>:<%= port %>
-      <% endfor %>
+      
+      - 3000:3000
+      
     volumes:
-      <% for volume in volumes %>
-      - ./<%= volume | replace('/', '') %>:<%= volume %>
-      <% endfor %>
+      
+      - ./data:/data
+      
       - /etc/localtime:/etc/localtime:ro
     restart: always

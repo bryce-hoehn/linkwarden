@@ -1,0 +1,10 @@
+{
+  "name": "linkwarden",
+  "upstream": "linkwarden/linkwarden",
+  "images": [
+    {
+      "name": "linkwarden",
+      "package": "linkwarden-image"
+    }
+  ]
+}

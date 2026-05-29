@@ -1,5 +1,5 @@
 {
-  description = "<%= name.capitalize() %> distroless image using nix2container";
+  description = "Linkwarden distroless image using nix2container";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -11,48 +11,42 @@
     system = builtins.currentSystem;
     pkgs = nixpkgs.legacyPackages.${system};
     n2c = nix2container.outputs.packages.${system}.nix2container;
-    pkg = pkgs.<%= name %>;
+    pkg = pkgs.linkwarden;
     imageConfig = {
       ExposedPorts = {
-        <% for port in ports %>
-        "<%= port %>/tcp" = {};
-        <% endfor %>
+        
+        "3000/tcp" = {};
+        
       };
       Volumes = {
-        <% for volume in volumes %>
-        "<%= volume %>" = {};
-        <% endfor %>
+        
+        "/data" = {};
+        
       };
-      <% if env %>
-      Env = [
-        <% for e in env %>
-        "<%= e %>"
-        <% endfor %>
-      ];
-      <% endif %>
-      Cmd = [ "${pkg}/bin/<%= main_program or name %>"<% for arg in cmd_args %> "<%= arg %>"<% endfor %> ];
+      
+      Cmd = [ "${pkg}/bin/linkwarden" ];
     };
   in {
     packages.${system} = {
-      <%= name %>-image = n2c.buildImage {
-        name = "<%= name %>";
+      linkwarden-image = n2c.buildImage {
+        name = "linkwarden";
         tag = "latest";
         fromImage = base.packages.${system}.base-image;
         maxLayers = 5;
         config = imageConfig;
       };
 
-      <%= name %>-debug-image = n2c.buildImage {
-        name = "<%= name %>";
+      linkwarden-debug-image = n2c.buildImage {
+        name = "linkwarden";
         tag = "latest-debug";
         fromImage = base.packages.${system}.base-debug-image;
         maxLayers = 5;
         config = imageConfig;
       };
 
-      <%= name %> = pkg;
+      linkwarden = pkg;
 
-      default = self.packages.${system}.<%= name %>-image;
+      default = self.packages.${system}.linkwarden-image;
     };
 
     version = pkg.version;
