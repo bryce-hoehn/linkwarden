@@ -1,0 +1,36 @@
+name: Build & Publish
+
+permissions:
+  contents: write
+  packages: write
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild current version'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.read.outputs.images }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: read
+        run: |
+          echo "images=$(jq -c '.images' config.json)" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: config
+    uses: podmania/actions/.github/workflows/build-publish.yml@main
+    with:
+      version-output: version
+      images: ${{ needs.config.outputs.images }}
+      force_rebuild: ${{ github.event.inputs.force_rebuild == 'true' }}

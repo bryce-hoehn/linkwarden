@@ -1,0 +1,9 @@
+name: Update version
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    uses: podmania/actions/.github/workflows/update-version.yml@main
